@@ -54,6 +54,9 @@ COMM_COPY_HEADER_FILES = {
     "mars/sdt/sdt_manager.h": "sdt",
     "mars/sdt/constants.h": "sdt",
     "mars/sdt/netchecker_profile.h": "sdt",
+    "mars/sdt/src/checkimpl/base_netinfo_query.h": "sdt",
+    "mars/sdt/src/checkimpl/dnsquery.h": "sdt",
+    "mars/sdt/src/checkimpl/pingquery.h": "sdt",
 }
 
 WIN_COPY_EXT_FILES = {
@@ -103,6 +106,7 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 
+#使用libtool编译
 def libtool_libs(src_libs, dst_lib):
     src_lib_str = ''
     for l in src_libs:
@@ -116,7 +120,7 @@ def libtool_libs(src_libs, dst_lib):
 
     return True
 
-
+# 使用lipo编译
 def lipo_libs(src_libs, dst_lib):
     src_lib_str = u''
     for l in src_libs:
@@ -158,7 +162,7 @@ GENERATE_DSYM_FILE_CMD = 'dsymutil %s -o %s'
 def gen_dwarf_with_dsym(src_dylib, dst_dsym):
     os.system(GENERATE_DSYM_FILE_CMD % (src_dylib, dst_dsym))
 
-
+# 移除编译相关的文件
 def remove_cmake_files(path):
     cmake_files = path + '/CMakeFiles'
     if os.path.exists(cmake_files):
@@ -286,6 +290,7 @@ def copy_folder(src: str, dst: str):
 
 
 def make_static_framework(src_lib, dst_framework, header_file_mappings, header_files_src_base='./'):
+    # 清空文件
     if os.path.exists(dst_framework):
         shutil.rmtree(dst_framework)
 
@@ -393,7 +398,7 @@ def parse_as_git(path):
 
     return revision, path, url
 
-
+#  生成mars修订文件
 def gen_mars_revision_file(version_file_path, tag=''):
     revision, path, url = parse_as_git(version_file_path)
 

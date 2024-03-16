@@ -19,17 +19,20 @@ OPEN_SSL_ARCHS = ['x86_64', 'arm64']
 
 
 def build_ios(tag=''):
+
     gen_mars_revision_file('comm', tag)
     
+    #  clean编译文件夹
     clean(BUILD_OUT_PATH)
     os.chdir(BUILD_OUT_PATH)
-    
+    # 执行cmake
     ret = os.system(IOS_BUILD_OS_CMD)
     os.chdir(SCRIPT_PATH)
     if ret != 0:
         print('!!!!!!!!!!!build os fail!!!!!!!!!!!!!!!')
         return False
 
+# 静态库path list
     libtool_os_dst_lib = INSTALL_PATH + '/os'
     libtool_src_lib = glob.glob(INSTALL_PATH + '/*.a')
     libtool_src_lib.append(BUILD_OUT_PATH + '/zstd/libzstd.a')
@@ -37,6 +40,7 @@ def build_ios(tag=''):
     if not libtool_libs(libtool_src_lib, libtool_os_dst_lib):
         return False
 
+# 编译支持模拟器的库
     clean(BUILD_OUT_PATH)
     os.chdir(BUILD_OUT_PATH)
     ret = os.system(IOS_BUILD_SIMULATOR_CMD)
@@ -69,6 +73,7 @@ def build_ios(tag=''):
         return False
 
     dst_framework_path = INSTALL_PATH + '/mars.framework'
+    # 生成mars frmework
     make_static_framework(lipo_dst_lib, dst_framework_path, COMM_COPY_HEADER_FILES, '../')
 
     print('==================Output========================')
