@@ -68,6 +68,8 @@ if(ANDROID)
     find_library(log-lib log)
     find_library(z-lib z)
 
+    # link_directories 是 CMake 中一个用于指定额外的库文件搜索路径的指令。
+    # 通常，在构建项目时，编译器需要链接各种库文件。如果这些库文件不在默认的搜索路径中，需要使用 link_directories 指令告诉构建系统在指定的目录中查找库文件
     link_directories(app baseevent xlog sdt stn comm boost zstd)
 
     # marsxlog

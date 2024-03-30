@@ -120,6 +120,7 @@ void SdtCore::__Reset() {
     checking_ = false;
 }
 
+// 创建线程后执行
 void SdtCore::__RunOn() {
     xinfo_function();
 

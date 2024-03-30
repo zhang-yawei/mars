@@ -15,6 +15,7 @@ xcshareddata
 /mars/libraries/*/
 /mars/*/libs/
 !/mars/boost/libs/
+/samples/iOS/iOSDemo/mars.framework/
 /samples/iOS/iOSDemo/Kernel/MarsLib/
 /samples/iOS/iOSDemoXlog/Kernel/MarsLib/
 /samples/iOS/XloggerSwiftDemo/Kernel/MarsLib/
