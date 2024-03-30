@@ -28,6 +28,8 @@
 
 #import "AppDelegate.h"
 
+using namespace  mars::xlog;
+
 int main(int argc, char * argv[]) {
     @autoreleasepool {
         

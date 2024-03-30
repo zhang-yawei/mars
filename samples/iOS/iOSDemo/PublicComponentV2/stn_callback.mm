@@ -1,7 +1,7 @@
 // Tencent is pleased to support the open source community by making Mars available.
 // Copyright (C) 2016 THL A29 Limited, a Tencent company. All rights reserved.
 
-// Licensed under the MIT License (the "License"); you may not use this file except in 
+// Licensed under the MIT License (the "License"); you may not use this file except in
 // compliance with the License. You may obtain a copy of the License at
 // http://opensource.org/licenses/MIT
 
@@ -52,6 +52,12 @@ std::vector<std::string> StnCallBack::OnNewDns(const std::string& _host) {
     vector.push_back("118.89.24.72");
     return vector;
 }
+    
+std::vector<std::string> StnCallBack::OnNewDns(const std::string& host, bool _longlink_host) {
+        std::vector<std::string> vector;
+        vector.push_back("118.89.24.72");
+        return vector;
+}
 
 void StnCallBack::OnPush(const std::string& _channel_id, uint32_t _cmdid, uint32_t _taskid, const AutoBuffer& _body, const AutoBuffer& _extend) {
     if (_body.Length() > 0) {
@@ -70,6 +76,26 @@ bool StnCallBack::Req2Buf(uint32_t _taskid, void* const _user_context, const std
     _outbuffer.Write(requestData.bytes,requestData.length);
     return requestData.length > 0;
 }
+    
+     bool StnCallBack::Req2Buf(uint32_t _taskid,
+                         void* const _user_context,
+                         const std::string& _user_id,
+                         AutoBuffer& outbuffer,
+                         AutoBuffer& extend,
+                         int& error_code,
+                         const int channel_select,
+                         const std::string& host,
+                         const unsigned short client_sequence_id)
+    {
+        NSData* requestData =  [[NetworkService sharedInstance] Request2BufferWithTaskID:_taskid userContext:_user_context];
+        if (requestData == nil) {
+            requestData = [[NSData alloc] init];
+        }
+         outbuffer.AllocWrite(requestData.length);
+         outbuffer.Write(requestData.bytes,requestData.length);
+        return requestData.length > 0;
+    }
+    
 
 int StnCallBack::Buf2Resp(uint32_t _taskid, void* const _user_context, const std::string& _user_id, const AutoBuffer& _inbuffer, const AutoBuffer& _extend, int& _error_code, const int _channel_select) {
     
@@ -83,13 +109,73 @@ int StnCallBack::Buf2Resp(uint32_t _taskid, void* const _user_context, const std
     
     return handle_type;
 }
+    
+    int StnCallBack::Buf2Resp(uint32_t _taskid,
+                         void* const _user_context,
+                         const std::string& _user_id,
+                         const AutoBuffer& _inbuffer,
+                         const AutoBuffer& _extend,
+                         int& _error_code,
+                         const int _channel_select,
+                         unsigned short& server_sequence_id){
+        
+        int handle_type = mars::stn::kTaskFailHandleNormal;
+        NSData* responseData = [NSData dataWithBytes:(const void *) _inbuffer.Ptr() length:_inbuffer.Length()];
+        NSInteger errorCode = [[NetworkService sharedInstance] Buffer2ResponseWithTaskID:_taskid ResponseData:responseData userContext:_user_context];
+        
+        if (errorCode != 0) {
+            handle_type = mars::stn::kTaskFailHandleDefault;
+        }
+        
+        return handle_type;
+    }
 
-int StnCallBack::OnTaskEnd(uint32_t _taskid, void* const _user_context, const std::string& _user_id, int _error_type, int _error_code) {
+int StnCallBack::OnTaskEnd(uint32_t _taskid, void* const _user_context, const std::string& _user_id, int _error_type, int _error_code){
     
     return (int)[[NetworkService sharedInstance] OnTaskEndWithTaskID:_taskid userContext:_user_context errType:_error_type errCode:_error_code];
 
 }
+    
+    int StnCallBack::OnTaskEnd(uint32_t _taskid,
+                          void* const _user_context,
+                          const std::string& _user_id,
+                          int _error_type,
+                          int _error_code,
+                          const CgiProfile& _profile){
+        
+        return (int)[[NetworkService sharedInstance] OnTaskEndWithTaskID:_taskid userContext:_user_context errType:_error_type errCode:_error_code];
 
+    }
+
+void StnCallBack::OnLongLinkNetworkError(ErrCmdType _err_type, int _err_code, const std::string& _ip, uint16_t _port) {
+    
+}
+    
+void StnCallBack::OnShortLinkNetworkError(ErrCmdType _err_type,
+                                             int _err_code,
+                                             const std::string& _ip,
+                                             const std::string& _host,
+                                             uint16_t _port){
+}
+
+    void StnCallBack::OnLongLinkStatusChange(int _status)    {
+}
+    
+    
+        void StnCallBack::RequestNetCheckShortLinkHosts(std::vector<std::string>& _hostlist){
+            
+        }
+    
+        void StnCallBack::ReportTaskProfile(const TaskProfile& _task_profile){
+            
+        };
+        void StnCallBack::ReportTaskLimited(int _check_type, const Task& _task, unsigned int& _param){
+            
+        };
+        void StnCallBack::ReportDnsProfile(const DnsProfile& _dns_profile){
+            
+        }
+    
 void StnCallBack::ReportConnectStatus(int _status, int longlink_status) {
     
     switch (longlink_status) {
@@ -129,6 +215,7 @@ void StnCallBack::RequestSync() {
         
     }
 }
+
 
 
 
