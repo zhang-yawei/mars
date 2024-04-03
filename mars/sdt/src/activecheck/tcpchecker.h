@@ -35,7 +35,7 @@ class TcpChecker : public BaseChecker {
 
     virtual int StartDoCheck(CheckRequestProfile& _check_request);
 
- protected:
+//  protected:
     virtual void __DoCheck(CheckRequestProfile& _check_request);
 
  private:

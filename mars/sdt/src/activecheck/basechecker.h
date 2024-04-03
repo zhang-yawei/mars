@@ -42,7 +42,8 @@ class BaseChecker {
     virtual int StartDoCheck(CheckRequestProfile& _check_request) = 0;
     int CancelDoCheck();
 
- protected:
+//  protected:
+public:
     virtual void __DoCheck(CheckRequestProfile& _check_request) = 0;
 
  protected:

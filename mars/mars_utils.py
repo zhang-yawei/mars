@@ -24,21 +24,27 @@ COMM_COPY_HEADER_FILES = {
     "mars/comm/objc/ThreadOperationQueue.h": "comm",
     "mars/comm/socket/unix_socket.h": "comm/socket",
 
+
+
     "mars/comm/xlogger/preprocessor.h": "xlog",
     "mars/comm/xlogger/xloggerbase.h": "xlog",
     "mars/comm/xlogger/xlogger.h": "xlog",
 
     "mars/boot/context.h": "boot",
     "mars/boot/base_manager.h": "boot",
+    
+    # "mars/boost/bind.hpp": "boost",
+    # "mars/boost/bind/bind.hpp": "boost/bind",
+    # "mars/boost/bind/placeholders.hpp": "boost/bind",
 
-    "mars/stn/stn.h": "stn",
-    "mars/stn/config.h": "stn",
-    "mars/stn/stn_logic.h": "stn",
-    "mars/stn/stn_manager.h": "stn",
-    "mars/stn/task_profile.h": "stn",
-    "mars/stn/proto/stnproto_logic.h": "stn",
-    "mars/stn/proto/shortlink_packer.h": "stn/proto",
-    "mars/stn/proto/longlink_packer.h": "stn/proto",
+    # "mars/stn/stn.h": "stn",
+    # "mars/stn/config.h": "stn",
+    # "mars/stn/stn_logic.h": "stn",
+    # "mars/stn/stn_manager.h": "stn",
+    # "mars/stn/task_profile.h": "stn",
+    # "mars/stn/proto/stnproto_logic.h": "stn",
+    # "mars/stn/proto/shortlink_packer.h": "stn/proto",
+    # "mars/stn/proto/longlink_packer.h": "stn/proto",
 
     "mars/baseevent/base_logic.h": "baseevent",
 
@@ -57,6 +63,9 @@ COMM_COPY_HEADER_FILES = {
     "mars/sdt/src/checkimpl/base_netinfo_query.h": "sdt",
     "mars/sdt/src/checkimpl/dnsquery.h": "sdt",
     "mars/sdt/src/checkimpl/pingquery.h": "sdt",
+    "mars/sdt/src/sdt_tool.h": "sdt/src",
+    "mars/sdt/src/sdt_callback.h": "sdt/src",
+    "mars/sdt/src/sdt_extern_callback.h": "sdt/src",
 }
 
 WIN_COPY_EXT_FILES = {
@@ -72,6 +81,12 @@ UNIX_COPY_EXT_FILES = {
     "mars/comm/platform_comm.h": "comm",
     "mars/comm/xlogger/loginfo_extract.h": "xlog",
 }
+
+IOS_COPY_HEADER_FILES = {
+    "mars/comm/alarm.h": "comm",
+    "mars/comm/socket/socketselect.h": "comm/socketselect",
+}
+
 
 XLOG_COPY_HEADER_FILES = {
     "mars/comm/verinfo.h": "comm",

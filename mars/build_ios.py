@@ -74,7 +74,12 @@ def build_ios(tag=''):
 
     dst_framework_path = INSTALL_PATH + '/mars.framework'
     # 生成mars frmework
-    make_static_framework(lipo_dst_lib, dst_framework_path, COMM_COPY_HEADER_FILES, '../')
+    headers_map:dict[str, str] = dict()
+    headers_map.update(COMM_COPY_HEADER_FILES)
+    headers_map.update(IOS_COPY_HEADER_FILES)
+    headers_map.update(XLOG_COPY_HEADER_FILES)
+
+    make_static_framework(lipo_dst_lib, dst_framework_path, headers_map, '../')
 
     print('==================Output========================')
     print(dst_framework_path)

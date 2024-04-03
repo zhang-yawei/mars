@@ -23,13 +23,13 @@
 #include "mars/comm/time_utils.h"
 #include "mars/comm/xlogger/xlogger.h"
 #include "mars/sdt/constants.h"
-#include "mars/stn/proto/longlink_packer.h"
-#include "mars/stn/stn_logic.h"
+// #include "mars/stn/proto/longlink_packer.h"
+// #include "mars/stn/stn_logic.h"
 #include "sdt/src/checkimpl/tcpquery.h"
 #include "sdt/src/tools/netchecker_socketutils.hpp"
 
 using namespace mars::sdt;
-using namespace mars::stn;
+// using namespace mars::stn;
 
 TcpChecker::TcpChecker() {
     xverbose_function();
@@ -120,15 +120,15 @@ void TcpChecker::__DoCheck(CheckRequestProfile& _check_request) {
 }
 
 void TcpChecker::__NoopReq(AutoBuffer& _noop_send) {
-    AutoBuffer noop_body;
-    AutoBuffer noop_extension;
-    gDefaultLongLinkEncoder.longlink_noop_req_body(noop_body, noop_extension);
-    gDefaultLongLinkEncoder.longlink_pack(gDefaultLongLinkEncoder.longlink_noop_cmdid(),
-                                          Task::kNoopTaskID,
-                                          noop_body,
-                                          noop_extension,
-                                          _noop_send,
-                                          NULL);
+    // AutoBuffer noop_body;
+    // AutoBuffer noop_extension;
+    // gDefaultLongLinkEncoder.longlink_noop_req_body(noop_body, noop_extension);
+    // gDefaultLongLinkEncoder.longlink_pack(gDefaultLongLinkEncoder.longlink_noop_cmdid(),
+    //                                       Task::kNoopTaskID,
+    //                                       noop_body,
+    //                                       noop_extension,
+    //                                       _noop_send,
+    //                                       NULL);
 }
 
 bool TcpChecker::__NoopResp(const AutoBuffer& _packed,
@@ -136,15 +136,15 @@ bool TcpChecker::__NoopResp(const AutoBuffer& _packed,
                             uint32_t& _seq,
                             size_t& _package_len,
                             AutoBuffer& _body) {
-    AutoBuffer extension;
-    int unpackret =
-        gDefaultLongLinkEncoder.longlink_unpack(_packed, _cmdid, _seq, _package_len, _body, extension, NULL);
-    if (unpackret == LONGLINK_UNPACK_OK) {
-        if (gDefaultLongLinkEncoder.longlink_noop_isresp(Task::kNoopTaskID, _cmdid, _seq, _body, extension)) {
-            gDefaultLongLinkEncoder.longlink_noop_resp_body(_body, extension);
-            return true;
-        }
-    }
+    // AutoBuffer extension;
+    // int unpackret =
+    //     gDefaultLongLinkEncoder.longlink_unpack(_packed, _cmdid, _seq, _package_len, _body, extension, NULL);
+    // if (unpackret == LONGLINK_UNPACK_OK) {
+    //     if (gDefaultLongLinkEncoder.longlink_noop_isresp(Task::kNoopTaskID, _cmdid, _seq, _body, extension)) {
+    //         gDefaultLongLinkEncoder.longlink_noop_resp_body(_body, extension);
+    //         return true;
+    //     }
+    // }
 
     return false;
 }

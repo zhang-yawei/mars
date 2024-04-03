@@ -38,7 +38,7 @@ class HttpChecker : public BaseChecker {
  public:
     void SetHttpNetcheckCGI(std::string cgi);
 
- protected:
+//  protected:
     virtual void __DoCheck(CheckRequestProfile& _check_request);
 };
 

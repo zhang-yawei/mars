@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 
-#include "boost/bind.hpp"
+#include "mars/boost/bind.hpp"
 #include "mars/comm/socket/unix_socket.h"
 
 #ifdef __APPLE__

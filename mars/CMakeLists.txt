@@ -29,7 +29,7 @@ add_subdirectory(app app)
 add_subdirectory(baseevent baseevent)
 add_subdirectory(xlog xlog)
 add_subdirectory(sdt sdt)
-add_subdirectory(stn stn)
+# add_subdirectory(stn stn)
 
 # for zstd
 # 预编译
@@ -120,7 +120,7 @@ if(ANDROID)
     find_library(SSL_LIB ssl PATHS openssl/openssl_lib_android/${ANDROID_ABI} NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
     target_link_libraries(${SELF_LIB_NAME} "-Wl,--gc-sections"
                         ${log-lib}
-                        stn
+                        # stn
                         sdt
                         app
                         baseevent
