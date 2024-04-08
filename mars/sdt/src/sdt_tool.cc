@@ -64,7 +64,7 @@ extern "C"
 
             socket_ipinfo_t ip_info;
             std::vector<CheckIPPort> check_ipport_list;
-            int dns_ret = socket_gethostbyname((*iter).c_str(), &ip_info, 2 * 1000, NULL);
+            int dns_ret = socket_gethostbyname((*iter).c_str(), &ip_info, 10 * 1000, NULL);
             if (dns_ret == 0)
             {
                 for (int i = 0; i < ip_info.size; i++)

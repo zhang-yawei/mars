@@ -8,6 +8,13 @@ extern "C"
 
     typedef struct SdtDiagnoseResult
     {
+        // kPingCheck = 0,
+        // kDnsCheck = 1,
+        // kNewDnsCheck,
+        // kTcpCheck,
+        // kHttpCheck,
+        // kTracerouteCheck,
+        // kReqBufCheck,
         int netcheck_type; // ping dns tcp http
 
         int error_code;
@@ -32,7 +39,9 @@ extern "C"
         /* data */
     } SdtDiagnoseResult;
 
-    typedef void (*sdt_callback_func)(SdtDiagnoseResult *results, int num);
+    typedef void (*sdt_callback_func)(struct SdtDiagnoseResult results[], int num);
+
+    void sdt_diagnose_result_free(struct SdtDiagnoseResult *result);
 
 #ifdef __cplusplus
 }

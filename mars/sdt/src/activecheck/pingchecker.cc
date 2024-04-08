@@ -28,15 +28,18 @@
 
 using namespace mars::sdt;
 
-PingChecker::PingChecker() {
+PingChecker::PingChecker()
+{
     xverbose_function();
 }
 
-PingChecker::~PingChecker() {
+PingChecker::~PingChecker()
+{
     xverbose_function();
 }
 
-int PingChecker::StartDoCheck(CheckRequestProfile& _check_request) {
+int PingChecker::StartDoCheck(CheckRequestProfile &_check_request)
+{
 #if defined(ANDROID) || defined(__APPLE__)
     xinfo_function();
     return BaseChecker::StartDoCheck(_check_request);
@@ -46,17 +49,21 @@ int PingChecker::StartDoCheck(CheckRequestProfile& _check_request) {
 #endif
 }
 
-void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
+void PingChecker::__DoCheck(CheckRequestProfile &_check_request)
+{
 #if defined(ANDROID) || defined(__APPLE__)
     xinfo_function();
 
     // longlink ip ping
     for (CheckIPPorts_Iterator iter = _check_request.longlink_items.begin();
          iter != _check_request.longlink_items.end();
-         ++iter) {
-            // 遍历 long link item
-        for (std::vector<CheckIPPort>::iterator ipport = iter->second.begin(); ipport != iter->second.end(); ++ipport) {
-            if (is_canceled_) {
+         ++iter)
+    {
+        // 遍历 long link item
+        for (std::vector<CheckIPPort>::iterator ipport = iter->second.begin(); ipport != iter->second.end(); ++ipport)
+        {
+            if (is_canceled_)
+            {
                 xinfo2(TSF "PingChecker is canceled.");
                 return;
             }
@@ -68,7 +75,7 @@ void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
             profile.netcheck_type = kPingCheck;
             profile.network_type = comm::getNetInfo();
 
-            uint64_t start_time = gettickcount();
+            uint64_t start_time = gettickcount(); // 开始时间
             PingQuery ping_query;
             int ret = ping_query.RunPingQuery(
                 0,
@@ -81,17 +88,21 @@ void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
             profile.checkcount = DEFAULT_PING_COUNT;
 
             struct PingStatus
-                ping_status;  // = {0};  //can not define pingStatus in if(0==ret),because we need pingStatus.ip
+                ping_status; // = {0};  //can not define pingStatus in if(0==ret),because we need pingStatus.ip
             char loss_rate[16] = {0};
             char avgrtt[16] = {0};
 
-            if (0 == ret) {
+            if (0 == ret)
+            {
                 ping_query.GetPingStatus(ping_status);
                 const float EPSINON = 0.00001;
 
-                if ((ping_status.loss_rate - 1.0) >= -EPSINON && (ping_status.loss_rate - 1.0) <= EPSINON) {
+                if ((ping_status.loss_rate - 1.0) >= -EPSINON && (ping_status.loss_rate - 1.0) <= EPSINON)
+                {
                     xinfo2(TSF "ping check, host: %_ failed.", host);
-                } else {
+                }
+                else
+                {
                     xinfo2(TSF "ping check, host: %_ success.", host);
                 }
 
@@ -105,9 +116,11 @@ void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
             _check_request.checkresult_profiles.push_back(profile);
             _check_request.check_status = (profile.error_code == 0) ? kCheckContinue : kCheckFinish;
 
-            if (_check_request.total_timeout != UNUSE_TIMEOUT) {
+            if (_check_request.total_timeout != UNUSE_TIMEOUT)
+            {
                 _check_request.total_timeout -= cost_time;
-                if (_check_request.total_timeout <= 0) {
+                if (_check_request.total_timeout <= 0)
+                {
                     xinfo2(TSF "ping check, host: %_, timeout.", host);
                     break;
                 }
@@ -118,9 +131,12 @@ void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
     // shortlink ip ping
     for (CheckIPPorts_Iterator iter = _check_request.shortlink_items.begin();
          iter != _check_request.shortlink_items.end();
-         ++iter) {
-        for (std::vector<CheckIPPort>::iterator ipport = iter->second.begin(); ipport != iter->second.end(); ++ipport) {
-            if (is_canceled_) {
+         ++iter)
+    {
+        for (std::vector<CheckIPPort>::iterator ipport = iter->second.begin(); ipport != iter->second.end(); ++ipport)
+        {
+            if (is_canceled_)
+            {
                 xinfo2(TSF "PingChecker is canceled.");
                 return;
             }
@@ -143,17 +159,21 @@ void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
             profile.checkcount = DEFAULT_PING_COUNT;
 
             struct PingStatus
-                ping_status;  // = {0};  //can not define pingStatus in if(0==ret),because we need pingStatus.ip
+                ping_status; // = {0};  //can not define pingStatus in if(0==ret),because we need pingStatus.ip
             char loss_rate[16] = {0};
             char avgrtt[16] = {0};
 
-            if (0 == ret) {
+            if (0 == ret)
+            {
                 ping_query.GetPingStatus(ping_status);
                 const float EPSINON = 0.00001;
 
-                if ((ping_status.loss_rate - 1.0) >= -EPSINON && (ping_status.loss_rate - 1.0) <= EPSINON) {
+                if ((ping_status.loss_rate - 1.0) >= -EPSINON && (ping_status.loss_rate - 1.0) <= EPSINON)
+                {
                     xinfo2(TSF "ping check, host: %_ failed.", host);
-                } else {
+                }
+                else
+                {
                     xinfo2(TSF "ping check, host: %_ success.", host);
                 }
 
@@ -167,9 +187,11 @@ void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
             _check_request.checkresult_profiles.push_back(profile);
             _check_request.check_status = (profile.error_code == 0) ? kCheckContinue : kCheckFinish;
 
-            if (_check_request.total_timeout != UNUSE_TIMEOUT) {
+            if (_check_request.total_timeout != UNUSE_TIMEOUT)
+            {
                 _check_request.total_timeout -= cost_time;
-                if (_check_request.total_timeout <= 0) {
+                if (_check_request.total_timeout <= 0)
+                {
                     xinfo2(TSF "ping check, host: %_, timeout.", host);
                     break;
                 }

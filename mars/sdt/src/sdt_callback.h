@@ -9,6 +9,7 @@ namespace mars
 {
     namespace sdt
     {
+        void malloc_and_copy_string_to_char(char **des_char, std::string res_string);
 
         class SdtCallBack : public Callback
         {

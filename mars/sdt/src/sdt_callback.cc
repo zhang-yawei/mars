@@ -2,6 +2,7 @@
 #include "sdt/netchecker_profile.h"
 #include <stdio.h>
 #include <string.h>
+#include <string>
 
 namespace mars
 {
@@ -29,45 +30,56 @@ namespace mars
         {
             if (this->callback_function != nullptr)
             {
-                SdtDiagnoseResult result_list[_check_results.size()];
-                printf("_check_results.size(): %d", _check_results.size());
+                struct SdtDiagnoseResult *result_list = new SdtDiagnoseResult[_check_results.size()];
+
                 int result_count = 0;
                 std::vector<CheckResultProfile>::const_iterator iter = _check_results.begin();
                 for (; iter != _check_results.end(); ++iter)
                 {
+                    result_list[result_count].netcheck_type = iter->netcheck_type;
 
-                    SdtDiagnoseResult result = result_list[result_count];
-                    result.netcheck_type = iter->netcheck_type;
-                    printf("=====iter:%d,result:%d", iter->netcheck_type, result.netcheck_type);
-                    result.error_code = iter->error_code;
-                    result.network_type = iter->network_type;
-                    // strcpy(result.ip, iter->ip.c_str());
+                    result_list[result_count].error_code = iter->error_code;
+                    result_list[result_count].network_type = iter->network_type;
 
-                    result.port = iter->port;
-                    result.conntime = iter->conntime;
-                    result.rtt = iter->rtt;
-                    // strcpy(result.rtt_str, iter->rtt_str.c_str());
+                    result_list[result_count].port = iter->port;
+                    result_list[result_count].conntime = iter->conntime;
+                    result_list[result_count].rtt = iter->rtt;
+                    result_list[result_count].status_code = iter->status_code;
+                    result_list[result_count].checkcount = iter->checkcount;
 
-                    // strcpy(result.url, iter->url.c_str());
-                    result.status_code = iter->status_code;
-                    result.checkcount = iter->checkcount;
-                    // strcpy(result.loss_rate, iter->loss_rate.c_str());
-                    // strcpy(result.domain_name, iter->domain_name.c_str());
-                    // strcpy(result.local_dns, iter->local_dns.c_str());
-                    // strcpy(result.ip1, iter->ip1.c_str());
-                    // strcpy(result.ip2, iter->ip2.c_str());
+                    sdt::malloc_and_copy_string_to_char(&(result_list[result_count].ip), iter->ip);
+                    sdt::malloc_and_copy_string_to_char(&(result_list[result_count].rtt_str), iter->rtt_str);
+                    sdt::malloc_and_copy_string_to_char(&(result_list[result_count].url), iter->url);
+                    sdt::malloc_and_copy_string_to_char(&(result_list[result_count].domain_name), iter->domain_name);
+                    sdt::malloc_and_copy_string_to_char(&(result_list[result_count].local_dns), iter->local_dns);
+                    sdt::malloc_and_copy_string_to_char(&(result_list[result_count].ip1), iter->ip1);
+                    sdt::malloc_and_copy_string_to_char(&(result_list[result_count].ip2), iter->ip2);
+                    sdt::malloc_and_copy_string_to_char(&(result_list[result_count].loss_rate), iter->loss_rate);
 
                     result_count++;
                 }
-                printf("\n");
                 for (int i = 0; i < result_count; i++)
                 {
-                    SdtDiagnoseResult result = result_list[i];
-                    printf("******** %d", result.netcheck_type);
+                    printf("------check_type:%s", result_list[i].ip);
                 }
 
-                printf("======%p==%d", result_list, result_list[0].netcheck_type);
                 this->callback_function(result_list, _check_results.size());
+                // 释放动态分配的内存
+                delete[] result_list;
+            }
+        }
+
+        void sdt::malloc_and_copy_string_to_char(char **des_char, std::string res_string)
+        {
+            if (!res_string.empty())
+            {
+                *des_char = (char *)malloc(res_string.size() + 1);
+                memset(*des_char, 0, res_string.size() + 1);
+                strcpy(*des_char, res_string.c_str());
+            }
+            else
+            {
+                *des_char = NULL;
             }
         }
     }
