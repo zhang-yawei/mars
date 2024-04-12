@@ -10,6 +10,9 @@ extern "C"
     int net_diagnose_start(char *hosts[], int num, sdt_callback_func callback);
     void net_diagnose_cancel();
     void net_diagnose_complete();
+
+    void net_info(bool need_wifi_ssid, char **ret_net_info);
+
 #ifdef __cplusplus
 }
 #endif

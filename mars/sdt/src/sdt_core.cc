@@ -38,28 +38,30 @@ using namespace mars::boot;
 
 #define RETURN_NETCHECKER_SYNC2ASYNC_FUNC(func) RETURN_SYNC2ASYNC_FUNC(func, async_reg_.Get(), )
 
-SdtCore::SdtCore(Context* context)
-: context_(context)
-, thread_(boost::bind(&SdtCore::__RunOn, this))
-, check_list_(std::list<BaseChecker*>())
-, cancel_(false)
-, checking_(false) {
+SdtCore::SdtCore(Context *context)
+    : context_(context), thread_(boost::bind(&SdtCore::__RunOn, this)), check_list_(std::list<BaseChecker *>()), cancel_(false), checking_(false)
+{
     xinfo_function();
 }
 
-SdtCore::~SdtCore() {
+SdtCore::~SdtCore()
+{
     xinfo_function();
 
     cancel_ = true;
 
-    if (!thread_.isruning()) {
+    if (!thread_.isruning())
+    {
         __Reset();
-    } else {
+    }
+    else
+    {
         CancelAndWait();
     }
 }
 
-void SdtCore::StartCheck(CheckIPPorts& _longlink_items, CheckIPPorts& _shortlink_items, int _mode, int _timeout) {
+void SdtCore::StartCheck(CheckIPPorts &_longlink_items, CheckIPPorts &_shortlink_items, int _mode, int _timeout)
+{
     xinfo_function();
     comm::ScopedLock lock(checking_mutex_);
 
@@ -72,7 +74,8 @@ void SdtCore::StartCheck(CheckIPPorts& _longlink_items, CheckIPPorts& _shortlink
         return;
 }
 
-void SdtCore::__InitCheckReq(CheckIPPorts& _longlink_items, CheckIPPorts& _shortlink_items, int _mode, int _timeout) {
+void SdtCore::__InitCheckReq(CheckIPPorts &_longlink_items, CheckIPPorts &_shortlink_items, int _mode, int _timeout)
+{
     xverbose_function();
     checking_ = true;
 
@@ -81,35 +84,47 @@ void SdtCore::__InitCheckReq(CheckIPPorts& _longlink_items, CheckIPPorts& _short
     check_request_.mode = _mode;
     check_request_.total_timeout = _timeout;
 
-    if (MODE_BASIC(_mode)) {
-        PingChecker* ping_checker = new PingChecker();
+    if (MODE_PING(_mode))
+    {
+        PingChecker *ping_checker = new PingChecker();
         check_list_.push_back(ping_checker);
-        DnsChecker* dns_checker = new DnsChecker();
+    }
+
+    if (MODE_BASIC(_mode))
+    {
+        PingChecker *ping_checker = new PingChecker();
+        check_list_.push_back(ping_checker);
+        DnsChecker *dns_checker = new DnsChecker();
         check_list_.push_back(dns_checker);
     }
 
-    if (MODE_SHORT(_mode)) {
+    if (MODE_SHORT(_mode))
+    {
         check_request_.shortlink_items.insert(_shortlink_items.begin(), _shortlink_items.end());
-        HttpChecker* http_checker = new HttpChecker();
+        HttpChecker *http_checker = new HttpChecker();
         http_checker->SetHttpNetcheckCGI(netcheck_cgi_);
         check_list_.push_back(http_checker);
     }
 
-    if (MODE_LONG(_mode)) {
-        TcpChecker* tcp_checker = new TcpChecker();
+    if (MODE_LONG(_mode))
+    {
+        TcpChecker *tcp_checker = new TcpChecker();
         check_list_.push_back(tcp_checker);
     }
 }
 
-void SdtCore::__Reset() {
+void SdtCore::__Reset()
+{
     xinfo_function();
 
     // check_request_.report
 
-    std::list<BaseChecker*>::iterator iter = check_list_.begin();
+    std::list<BaseChecker *>::iterator iter = check_list_.begin();
 
-    for (; iter != check_list_.end();) {
-        if (NULL != (*iter)) {
+    for (; iter != check_list_.end();)
+    {
+        if (NULL != (*iter))
+        {
             delete (*iter);
             (*iter) = NULL;
         }
@@ -121,10 +136,12 @@ void SdtCore::__Reset() {
 }
 
 // 创建线程后执行
-void SdtCore::__RunOn() {
+void SdtCore::__RunOn()
+{
     xinfo_function();
 
-    for (std::list<BaseChecker*>::iterator iter = check_list_.begin(); iter != check_list_.end(); ++iter) {
+    for (std::list<BaseChecker *>::iterator iter = check_list_.begin(); iter != check_list_.end(); ++iter)
+    {
         if (cancel_ || check_request_.check_status == kCheckFinish)
             break;
 
@@ -140,63 +157,70 @@ void SdtCore::__RunOn() {
     __Reset();
 }
 
-void SdtCore::__DumpCheckResult() {
+void SdtCore::__DumpCheckResult()
+{
     std::vector<CheckResultProfile>::iterator iter = check_request_.checkresult_profiles.begin();
-    for (; iter != check_request_.checkresult_profiles.end(); ++iter) {
-        switch (iter->netcheck_type) {
-            case kTcpCheck:
-                xinfo2(TSF "tcp check result, error_code:%_, ip:%_, port:%_, network_type:%_, rtt:%_",
-                       iter->error_code,
-                       iter->ip,
-                       iter->port,
-                       iter->network_type,
-                       iter->rtt);
-                break;
-            case kHttpCheck:
-                xinfo2(TSF "http check result, status_code:%_, url:%_, ip:%_, port:%_, network_type:%_, rtt:%_",
-                       iter->status_code,
-                       iter->url,
-                       iter->ip,
-                       iter->port,
-                       iter->network_type,
-                       iter->rtt);
-                break;
-            case kPingCheck:
-                xinfo2(TSF "ping check result, error_code:%_, ip:%_, network_type:%_, loss_rate:%_, rtt:%_",
-                       iter->error_code,
-                       iter->ip,
-                       iter->network_type,
-                       iter->loss_rate,
-                       iter->rtt_str);
-                break;
-            case kDnsCheck:
-                xinfo2(TSF "dns check result, error_code:%_, domain_name:%_, network_type:%_, ip1:%_, rtt:%_",
-                       iter->error_code,
-                       iter->domain_name,
-                       iter->network_type,
-                       iter->ip1,
-                       iter->rtt);
-                break;
+    for (; iter != check_request_.checkresult_profiles.end(); ++iter)
+    {
+        switch (iter->netcheck_type)
+        {
+        case kTcpCheck:
+            xinfo2(TSF "tcp check result, error_code:%_, ip:%_, port:%_, network_type:%_, rtt:%_",
+                   iter->error_code,
+                   iter->ip,
+                   iter->port,
+                   iter->network_type,
+                   iter->rtt);
+            break;
+        case kHttpCheck:
+            xinfo2(TSF "http check result, status_code:%_, url:%_, ip:%_, port:%_, network_type:%_, rtt:%_",
+                   iter->status_code,
+                   iter->url,
+                   iter->ip,
+                   iter->port,
+                   iter->network_type,
+                   iter->rtt);
+            break;
+        case kPingCheck:
+            xinfo2(TSF "ping check result, error_code:%_, ip:%_, network_type:%_, loss_rate:%_, rtt:%_",
+                   iter->error_code,
+                   iter->ip,
+                   iter->network_type,
+                   iter->loss_rate,
+                   iter->rtt_str);
+            break;
+        case kDnsCheck:
+            xinfo2(TSF "dns check result, error_code:%_, domain_name:%_, network_type:%_, ip1:%_, rtt:%_",
+                   iter->error_code,
+                   iter->domain_name,
+                   iter->network_type,
+                   iter->ip1,
+                   iter->rtt);
+            break;
         }
     }
     // ReportNetCheckResult(check_request_.checkresult_profiles);
     context_->GetManager<SdtManager>()->ReportNetCheckResult(check_request_.checkresult_profiles);
 }
 
-void SdtCore::CancelCheck() {
+void SdtCore::CancelCheck()
+{
     xinfo_function();
     cancel_ = true;
-    for (std::list<BaseChecker*>::iterator iter = check_list_.begin(); iter != check_list_.end(); ++iter) {
+    for (std::list<BaseChecker *>::iterator iter = check_list_.begin(); iter != check_list_.end(); ++iter)
+    {
         (*iter)->CancelDoCheck();
     }
 }
 
-void SdtCore::CancelAndWait() {
+void SdtCore::CancelAndWait()
+{
     xinfo_function();
     CancelCheck();
     thread_.join();
 }
 
-void SdtCore::SetHttpNetcheckCGI(std::string cgi) {
+void SdtCore::SetHttpNetcheckCGI(std::string cgi)
+{
     netcheck_cgi_ = cgi;
 }

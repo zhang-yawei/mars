@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include "mars/comm/socket/socket_address.h"
 #include <iostream>
+#include <mars/comm/network/netinfo_util.h>
+#include <mars/comm/comm_data.h>
 
 using namespace std;
 using namespace mars::sdt;
@@ -96,6 +98,14 @@ extern "C"
     void net_diagnose_complete()
     {
         remove_manager();
+    }
+
+    void net_info(bool need_wifi_ssid, char **ret_net_info)
+    {
+        std::string info = GetDetailNetInfo(need_wifi_ssid);
+        size_t length = info.length() + 1;
+        *ret_net_info = (char *)malloc(length);
+        memcpy(*ret_net_info, info.c_str(), length);
     }
 
 #ifdef __cplusplus
