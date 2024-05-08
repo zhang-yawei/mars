@@ -41,8 +41,6 @@ extern "C"
 
     typedef void (*sdt_callback_func)(struct SdtDiagnoseResult results[], int num);
 
-    void sdt_diagnose_result_free(struct SdtDiagnoseResult *result);
-
 #ifdef __cplusplus
 }
 #endif

@@ -4,6 +4,8 @@
 #include <string.h>
 #include <string>
 
+using namespace mars::sdt;
+
 namespace mars
 {
     namespace sdt
@@ -22,8 +24,26 @@ namespace mars
 
         void SdtCallBack::Release()
         {
-            delete instance_;
-            instance_ = NULL;
+            if (instance_ != NULL)
+            {
+                instance_->sdtRelease();
+                delete instance_;
+            }
+            instance_ = nullptr;
+        }
+
+        void SdtCallBack::sdtRelease()
+        {
+            if (pre_result_list_length != 0 && pre_result_list != nullptr)
+            {
+                for (int i = 0; i < pre_result_list_length; i++)
+                {
+                    struct SdtDiagnoseResult *result = &pre_result_list[i];
+                    sdt_diagnose_result_free(result);
+                }
+                delete[] pre_result_list;
+                pre_result_list = nullptr;
+            }
         }
 
         void SdtCallBack::ReportNetCheckResult(const std::vector<CheckResultProfile> &_check_results)
@@ -64,8 +84,9 @@ namespace mars
                 }
 
                 this->callback_function(result_list, _check_results.size());
+                pre_result_list = result_list;
+                pre_result_list_length = _check_results.size();
                 // 释放动态分配的内存
-                delete[] result_list;
             }
         }
 
@@ -81,6 +102,63 @@ namespace mars
             {
                 *des_char = NULL;
             }
+        }
+
+        void sdt::sdt_diagnose_result_free(struct SdtDiagnoseResult *result)
+        {
+
+            if (is_empty_string(result->ip))
+            {
+                free(result->ip);
+            }
+
+            if (is_empty_string(result->rtt_str))
+            {
+                free(result->rtt_str);
+            }
+            if (is_empty_string(result->url))
+            {
+                free(result->url);
+            }
+
+            if (is_empty_string(result->loss_rate))
+            {
+                free(result->loss_rate);
+            }
+
+            if (is_empty_string(result->domain_name))
+            {
+                free(result->domain_name);
+            }
+
+            if (is_empty_string(result->local_dns))
+            {
+                free(result->local_dns);
+            }
+
+            if (is_empty_string(result->ip1))
+            {
+                free(result->ip1);
+            }
+
+            if (is_empty_string(result->ip2))
+            {
+                free(result->ip2);
+            }
+        }
+
+        // 判断字符串是否为空
+        bool sdt::is_empty_string(char *str)
+        {
+            if (str != NULL)
+            {
+                if (strlen(str) == 0)
+                {
+                    return true;
+                }
+                return false;
+            }
+            return true;
         }
     }
 }

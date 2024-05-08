@@ -1,6 +1,7 @@
 #ifndef SDT_SRC_SDTTOOL_H_
 #define SDT_SRC_SDTTOOL_H_
-#include "sdt/src/sdt_extern_callback.h"
+// #include "sdt/src/sdt_extern_callback.h"
+#include "sdt_extern_callback.h"
 #ifdef __cplusplus
 extern "C"
 {
